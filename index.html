@@ -8,7 +8,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Great+Vibes&family=Parisienne&display=swap" rel="stylesheet" />
 
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -25,7 +25,9 @@
             --gold: #c9a84c;
             --gold-light: #e8d5a3;
             --gold-dark: #a8873a;
+            --gold-glow: #f3e5c0;
             --cream: #fdf8f0;
+            --cream-dark: #f5ede4;
             --blush: #f5e6e8;
             --dark: #1e1a1a;
             --text: #3d3535;
@@ -33,8 +35,10 @@
             --white: #ffffff;
             --shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
             --shadow-hover: 0 25px 70px rgba(0, 0, 0, 0.15);
+            --shadow-card: 0 30px 80px rgba(0, 0, 0, 0.25);
             --radius: 16px;
-            --transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            --transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            --transition-slow: 0.9s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         html {
@@ -88,6 +92,315 @@
         @keyframes spin {
             to {
                 transform: rotate(360deg);
+            }
+        }
+
+        /* ===== INVITATION CARD OVERLAY ===== */
+        #cardOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at center, #1a1414 0%, #0d0a0a 100%);
+            transition: opacity 1.2s ease, visibility 1.2s ease;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+        #cardOverlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .card-container {
+            perspective: 1200px;
+            width: 100%;
+            max-width: 580px;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .invitation-card {
+            position: relative;
+            width: 100%;
+            background: linear-gradient(145deg, #fdf6ed 0%, #f5eadc 100%);
+            border-radius: 24px;
+            padding: 48px 40px 40px;
+            box-shadow:
+                0 40px 80px rgba(0, 0, 0, 0.6),
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transform: rotateY(0deg) rotateX(0deg) scale(1);
+            transition: transform 0.1s ease;
+            border: 2px solid rgba(201, 168, 76, 0.3);
+            position: relative;
+            overflow: hidden;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Fold effect - crease line */
+        .invitation-card::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            width: 2px;
+            height: 80%;
+            background: linear-gradient(to bottom,
+                    transparent 0%,
+                    rgba(201, 168, 76, 0.15) 20%,
+                    rgba(201, 168, 76, 0.25) 50%,
+                    rgba(201, 168, 76, 0.15) 80%,
+                    transparent 100%);
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px rgba(201, 168, 76, 0.05);
+            z-index: 2;
+        }
+        /* Fold shadow left */
+        .invitation-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right,
+                    rgba(0, 0, 0, 0.02) 0%,
+                    rgba(0, 0, 0, 0) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        /* Right side shadow for depth */
+        .invitation-card .fold-shadow-right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to left,
+                    rgba(0, 0, 0, 0.02) 0%,
+                    rgba(0, 0, 0, 0) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Decorative border */
+        .invitation-card .border-deco {
+            position: absolute;
+            inset: 12px;
+            border: 1.5px solid rgba(201, 168, 76, 0.2);
+            border-radius: 16px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .invitation-card .border-deco-2 {
+            position: absolute;
+            inset: 20px;
+            border: 1px solid rgba(201, 168, 76, 0.1);
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Corner ornaments */
+        .corner {
+            position: absolute;
+            color: var(--gold);
+            font-size: 1.2rem;
+            opacity: 0.4;
+            z-index: 2;
+        }
+        .corner-tl {
+            top: 20px;
+            left: 22px;
+        }
+        .corner-tr {
+            top: 20px;
+            right: 22px;
+            transform: rotate(90deg);
+        }
+        .corner-bl {
+            bottom: 20px;
+            left: 22px;
+            transform: rotate(-90deg);
+        }
+        .corner-br {
+            bottom: 20px;
+            right: 22px;
+            transform: rotate(180deg);
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            width: 100%;
+        }
+
+        .card-content .invite-label {
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.1rem;
+            color: var(--gold);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.8;
+        }
+
+        .card-content .invite-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--dark);
+            letter-spacing: 2px;
+            margin-bottom: 2px;
+        }
+        .card-content .invite-title span {
+            color: var(--gold);
+        }
+
+        .card-content .divider-line {
+            width: 60px;
+            height: 2px;
+            background: var(--gold);
+            margin: 10px auto 12px;
+            position: relative;
+        }
+        .card-content .divider-line::after {
+            content: '✦';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--gold);
+            font-size: 0.9rem;
+            background: #f5eadc;
+            padding: 0 10px;
+        }
+
+        .card-content .couple-names {
+            font-family: 'Parisienne', cursive;
+            font-size: 3.2rem;
+            color: var(--dark);
+            line-height: 1.2;
+            margin: 6px 0 2px;
+        }
+        .card-content .couple-names .amp {
+            font-family: 'Great Vibes', cursive;
+            color: var(--gold);
+            font-size: 2.8rem;
+            display: inline-block;
+            margin: 0 6px;
+        }
+
+        .card-content .invite-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 6px;
+            font-weight: 300;
+        }
+
+        .card-content .invite-date {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--gold-dark);
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+        .card-content .invite-date i {
+            margin-right: 6px;
+            font-size: 0.9rem;
+        }
+
+        /* Click to open hint */
+        .click-hint {
+            position: absolute;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 4;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulse-hint 2.2s ease-in-out infinite;
+            background: rgba(245, 234, 220, 0.7);
+            padding: 6px 18px;
+            border-radius: 30px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(201, 168, 76, 0.15);
+        }
+        .click-hint i {
+            font-size: 0.7rem;
+            animation: bounce-hint 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-hint {
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.04);
+            }
+        }
+        @keyframes bounce-hint {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+
+        /* Hover effect on card */
+        .invitation-card:hover {
+            transform: rotateY(-2deg) rotateX(2deg) scale(1.01);
+            box-shadow:
+                0 50px 100px rgba(0, 0, 0, 0.5),
+                0 15px 40px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        /* Opening animation state */
+        .invitation-card.opening {
+            animation: cardUnfold 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        @keyframes cardUnfold {
+            0% {
+                transform: rotateY(0deg) rotateX(0deg) scale(1);
+                opacity: 1;
+            }
+            30% {
+                transform: rotateY(-8deg) rotateX(4deg) scale(1.03);
+                opacity: 1;
+            }
+            60% {
+                transform: rotateY(0deg) rotateX(0deg) scale(1.08);
+                opacity: 1;
+            }
+            100% {
+                transform: rotateY(0deg) rotateX(0deg) scale(1.15);
+                opacity: 0;
+                filter: blur(8px);
             }
         }
 
@@ -700,89 +1013,6 @@
             opacity: 0.8;
         }
 
-        /* ===== RSVP ===== */
-        #rsvp {
-            background: var(--cream);
-        }
-        .rsvp-wrap {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            align-items: start;
-        }
-        .rsvp-info h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            color: var(--dark);
-        }
-        .rsvp-info p {
-            color: var(--text-light);
-            margin: 8px 0 16px;
-        }
-        .rsvp-info .highlight {
-            color: var(--gold);
-            font-weight: 600;
-        }
-        .rsvp-form {
-            background: var(--white);
-            padding: 40px 35px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-        }
-        .rsvp-form .form-group {
-            margin-bottom: 18px;
-        }
-        .rsvp-form label {
-            display: block;
-            font-weight: 500;
-            font-size: 0.9rem;
-            margin-bottom: 4px;
-            color: var(--text);
-        }
-        .rsvp-form input,
-        .rsvp-form select,
-        .rsvp-form textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-            transition: var(--transition);
-            background: var(--cream);
-            color: var(--text);
-        }
-        .rsvp-form input:focus,
-        .rsvp-form select:focus,
-        .rsvp-form textarea:focus {
-            outline: none;
-            border-color: var(--gold);
-            box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.1);
-        }
-        .rsvp-form textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        .rsvp-form .btn-submit {
-            background: var(--gold);
-            color: var(--white);
-            border: none;
-            padding: 14px 40px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            width: 100%;
-            letter-spacing: 1px;
-            box-shadow: 0 8px 30px rgba(201, 168, 76, 0.3);
-        }
-        .rsvp-form .btn-submit:hover {
-            background: var(--gold-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(201, 168, 76, 0.4);
-        }
-
         /* ===== FOOTER ===== */
         footer {
             background: var(--dark);
@@ -845,9 +1075,6 @@
             .venue-wrap {
                 grid-template-columns: 1fr;
             }
-            .rsvp-wrap {
-                grid-template-columns: 1fr;
-            }
             .gallery-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -874,6 +1101,16 @@
             }
             .countdown-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            .invitation-card {
+                padding: 32px 24px 32px;
+                min-height: 380px;
+            }
+            .card-content .couple-names {
+                font-size: 2.6rem;
+            }
+            .card-content .invite-title {
+                font-size: 2rem;
             }
         }
 
@@ -929,11 +1166,60 @@
             .countdown-item .number {
                 font-size: 2.4rem;
             }
-            .rsvp-form {
-                padding: 24px 20px;
-            }
             .venue-map {
                 height: 260px;
+            }
+            .card-container {
+                max-width: 94%;
+                padding: 10px;
+            }
+            .invitation-card {
+                padding: 24px 16px 28px;
+                min-height: 320px;
+                border-radius: 18px;
+            }
+            .card-content .couple-names {
+                font-size: 2.2rem;
+            }
+            .card-content .invite-title {
+                font-size: 1.6rem;
+            }
+            .card-content .invite-sub {
+                font-size: 0.7rem;
+                letter-spacing: 2px;
+            }
+            .card-content .invite-date {
+                font-size: 0.9rem;
+            }
+            .click-hint {
+                font-size: 0.6rem;
+                padding: 4px 14px;
+                bottom: 16px;
+            }
+            .corner {
+                font-size: 0.9rem;
+            }
+            .corner-tl {
+                top: 12px;
+                left: 14px;
+            }
+            .corner-tr {
+                top: 12px;
+                right: 14px;
+            }
+            .corner-bl {
+                bottom: 12px;
+                left: 14px;
+            }
+            .corner-br {
+                bottom: 12px;
+                right: 14px;
+            }
+            .invitation-card .border-deco {
+                inset: 8px;
+            }
+            .invitation-card .border-deco-2 {
+                inset: 14px;
             }
         }
 
@@ -965,6 +1251,24 @@
             .countdown-item .number {
                 font-size: 2rem;
             }
+            .card-content .couple-names {
+                font-size: 1.8rem;
+            }
+            .card-content .couple-names .amp {
+                font-size: 1.6rem;
+            }
+            .card-content .invite-title {
+                font-size: 1.3rem;
+            }
+            .invitation-card {
+                padding: 18px 12px 22px;
+                min-height: 260px;
+            }
+            .click-hint {
+                font-size: 0.5rem;
+                padding: 3px 10px;
+                bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -975,6 +1279,45 @@
         <div class="loader-ring"></div>
     </div>
 
+    <!-- ===== INVITATION CARD OVERLAY ===== -->
+    <div id="cardOverlay">
+        <div class="card-container" id="cardContainer">
+            <div class="invitation-card" id="invitationCard">
+                <!-- Decorative borders -->
+                <div class="border-deco"></div>
+                <div class="border-deco-2"></div>
+
+                <!-- Corner ornaments -->
+                <span class="corner corner-tl"><i class="fas fa-star"></i></span>
+                <span class="corner corner-tr"><i class="fas fa-star"></i></span>
+                <span class="corner corner-bl"><i class="fas fa-star"></i></span>
+                <span class="corner corner-br"><i class="fas fa-star"></i></span>
+
+                <!-- Fold shadow right -->
+                <div class="fold-shadow-right"></div>
+
+                <!-- Card content -->
+                <div class="card-content">
+                    <div class="invite-label">✨ നിങ്ങളെ ക്ഷണിക്കുന്നു ✨</div>
+                    <div class="invite-title">വിവാഹ <span>ക്ഷണം</span></div>
+                    <div class="divider-line"></div>
+                    <div class="couple-names">
+                        അനു <span class="amp">&amp;</span> അഭി
+                    </div>
+                    <div class="invite-sub">— ഞങ്ങൾ ഒന്നിക്കുന്നു —</div>
+                    <div class="invite-date">
+                        <i class="fas fa-calendar-alt"></i> ഡിസംബർ 12, 2026 · ശനി
+                    </div>
+                </div>
+
+                <!-- Click hint -->
+                <div class="click-hint">
+                    <i class="fas fa-hand-pointer"></i> ക്ലിക്ക് ചെയ്ത് തുറക്കുക
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== NAV ===== -->
     <nav id="navbar">
         <div class="nav-logo">Anu &amp; Abhi</div>
@@ -983,7 +1326,6 @@
             <li><a href="#events">ചടങ്ങുകൾ</a></li>
             <li><a href="#venue">വേദി</a></li>
             <li><a href="#gallery">ഗാലറി</a></li>
-            <li><a href="#rsvp">RSVP</a></li>
         </ul>
         <button class="nav-toggle" id="navToggle" aria-label="Menu">
             <i class="fas fa-bars"></i>
@@ -1013,7 +1355,7 @@
             </div>
             <div class="hero-image">
                 <div class="img-frame">
-                    <!-- Replace src with your own couple photo -->
+                    <!-- Replace with your own couple photo -->
                     <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop" alt="Anu & Abhi" />
                     <div class="badge">✨ The Wedding</div>
                 </div>
@@ -1196,71 +1538,6 @@
         </div>
     </section>
 
-    <!-- ===== RSVP ===== -->
-    <section id="rsvp">
-        <div class="section-inner">
-            <div class="section-label">— നിങ്ങൾ വരുന്നുണ്ടോ? —</div>
-            <div class="section-title">RSVP <span>സ്ഥിരീകരിക്കുക</span></div>
-            <div class="divider"></div>
-            <p class="section-sub">നിങ്ങളുടെ സാന്നിധ്യം അറിയിച്ച് ഞങ്ങളെ സന്തോഷിപ്പിക്കൂ. ❤️</p>
-
-            <div class="rsvp-wrap">
-                <div class="rsvp-info">
-                    <h3>✨ ഞങ്ങളോടൊപ്പം ചേരൂ</h3>
-                    <p>
-                        ഞങ്ങളുടെ സന്തോഷത്തിൽ പങ്കുചേരാൻ നിങ്ങൾക്ക് കഴിയുമോ എന്ന് ഞങ്ങൾക്ക് അറിയണം.
-                        ദയവായി <span class="highlight">ഡിസംബർ 5, 2026</span> ന് മുമ്പായി നിങ്ങളുടെ
-                        സാന്നിധ്യം സ്ഥിരീകരിക്കുക.
-                    </p>
-                    <p style="margin-top:12px;">
-                        <i class="fas fa-phone" style="color:var(--gold);"></i> +91 98765 43210 &nbsp;|&nbsp;
-                        <i class="fas fa-envelope" style="color:var(--gold);"></i> wedding@anuabhi.com
-                    </p>
-                    <div style="margin-top:20px; display:flex; gap:14px; flex-wrap:wrap;">
-                        <span style="background:var(--gold-light); padding:6px 18px; border-radius:50px; font-size:0.8rem; color:var(--dark);">🕊️ പ്രവേശനം സൗജന്യം</span>
-                        <span style="background:var(--gold-light); padding:6px 18px; border-radius:50px; font-size:0.8rem; color:var(--dark);">🎁 കവറുകൾ സ്വാഗതം</span>
-                    </div>
-                </div>
-
-                <form class="rsvp-form" id="rsvpForm">
-                    <div class="form-group">
-                        <label for="rsvpName">നിങ്ങളുടെ പേര് *</label>
-                        <input type="text" id="rsvpName" placeholder="ഉദാ: മനു" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="rsvpEmail">ഇമെയിൽ</label>
-                        <input type="email" id="rsvpEmail" placeholder="your@email.com" />
-                    </div>
-                    <div class="form-group">
-                        <label for="rsvpPhone">ഫോൺ നമ്പർ *</label>
-                        <input type="tel" id="rsvpPhone" placeholder="+91 98765 43210" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="rsvpGuests">എത്ര പേർ വരുന്നു? *</label>
-                        <select id="rsvpGuests" required>
-                            <option value="">തിരഞ്ഞെടുക്കുക</option>
-                            <option value="1">1 പേർ</option>
-                            <option value="2">2 പേർ</option>
-                            <option value="3">3 പേർ</option>
-                            <option value="4">4 പേർ</option>
-                            <option value="5+">5+ പേർ</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="rsvpMessage">വിശേഷ ആവശ്യങ്ങൾ / സന്ദേശം</label>
-                        <textarea id="rsvpMessage" placeholder="എന്തെങ്കിലും പ്രത്യേക ആവശ്യങ്ങൾ ഉണ്ടോ?"></textarea>
-                    </div>
-                    <button type="submit" class="btn-submit">
-                        <i class="fas fa-heart" style="margin-right:8px;"></i> RSVP സ്ഥിരീകരിക്കുക
-                    </button>
-                    <p style="font-size:0.75rem; color:var(--text-light); text-align:center; margin-top:12px;">
-                        * നിർബന്ധിത ഫീൽഡുകൾ
-                    </p>
-                </form>
-            </div>
-        </div>
-    </section>
-
     <!-- ===== FOOTER ===== -->
     <footer>
         <div class="footer-logo">Anu &amp; Abhi</div>
@@ -1299,13 +1576,53 @@
         toggle.addEventListener('click', () => {
             links.classList.toggle('open');
         });
-        // Close on link click (mobile)
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', () => links.classList.remove('open'));
         });
 
+        // ——— INVITATION CARD OPEN ———
+        const cardOverlay = document.getElementById('cardOverlay');
+        const card = document.getElementById('invitationCard');
+        const cardContainer = document.getElementById('cardContainer');
+
+        function openInvitation() {
+            // Add opening animation to card
+            card.classList.add('opening');
+
+            // After animation, hide overlay and show site
+            setTimeout(() => {
+                cardOverlay.classList.add('hidden');
+                // Enable scrolling on body
+                document.body.style.overflow = '';
+                // Start countdown
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
+                // Trigger fade-in for sections
+                observeSections();
+            }, 1300);
+        }
+
+        // Click to open
+        cardContainer.addEventListener('click', openInvitation);
+
+        // Also allow click on the overlay itself (not just card)
+        cardOverlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                openInvitation();
+            }
+        });
+
+        // Keyboard support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                if (!cardOverlay.classList.contains('hidden')) {
+                    e.preventDefault();
+                    openInvitation();
+                }
+            }
+        });
+
         // ——— COUNTDOWN ———
-        // Set wedding date: December 12, 2026, 10:00 AM IST
         const weddingDate = new Date('2026-12-12T10:00:00+05:30').getTime();
 
         function updateCountdown() {
@@ -1331,38 +1648,10 @@
             document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
         }
 
+        // Initial call (will be overridden after card opens)
         updateCountdown();
-        setInterval(updateCountdown, 1000);
 
-        // ——— RSVP FORM ———
-        document.getElementById('rsvpForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const name = document.getElementById('rsvpName').value.trim();
-            const phone = document.getElementById('rsvpPhone').value.trim();
-            const guests = document.getElementById('rsvpGuests').value;
-
-            if (!name || !phone || !guests) {
-                alert('ദയവായി എല്ലാ നിർബന്ധിത ഫീൽഡുകളും പൂരിപ്പിക്കുക.');
-                return;
-            }
-
-            // Simple success feedback
-            const btn = this.querySelector('.btn-submit');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check-circle"></i> നന്ദി! RSVP സ്വീകരിച്ചു';
-            btn.style.background = '#2d7d46';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.style.background = '';
-                btn.disabled = false;
-                this.reset();
-            }, 3000);
-        });
-
-        // ——— SMOOTH SCROLL (optional enhancement) ———
+        // ——— SMOOTH SCROLL ———
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 const href = this.getAttribute('href');
@@ -1376,22 +1665,49 @@
         });
 
         // ——— INTERSECTION OBSERVER (fade-in) ———
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, { threshold: 0.1 });
+        function observeSections() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1, once: true });
 
-        document.querySelectorAll('.couple-card, .event-card, .countdown-item, .g-item, .venue-info, .venue-map, .rsvp-info, .rsvp-form')
-            .forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(30px)';
-                el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
-                observer.observe(el);
-            });
+            document.querySelectorAll('.couple-card, .event-card, .countdown-item, .g-item, .venue-info, .venue-map')
+                .forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(30px)';
+                    el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+                    observer.observe(el);
+                });
+        }
+
+        // Observe sections after card opens (will be called from openInvitation)
+        // Also observe immediately if card is already open (fallback)
+        setTimeout(() => {
+            if (cardOverlay.classList.contains('hidden')) {
+                observeSections();
+            }
+        }, 500);
+
+        // Also observe if user manually closes (though not needed)
+        // Ensure body scroll is enabled if card is hidden
+        if (cardOverlay.classList.contains('hidden')) {
+            document.body.style.overflow = '';
+        } else {
+            document.body.style.overflow = 'hidden';
+        }
+
+        // MutationObserver to detect when card becomes hidden
+        const observer = new MutationObserver(() => {
+            if (cardOverlay.classList.contains('hidden')) {
+                document.body.style.overflow = '';
+                observeSections();
+            }
+        });
+        observer.observe(cardOverlay, { attributes: true, attributeFilter: ['class'] });
     </script>
 
 </body>
